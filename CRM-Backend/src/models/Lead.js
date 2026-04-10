@@ -15,9 +15,9 @@ const LeadSchema = new mongoose.Schema({
             'Please add a valid email'
         ]
     },
-    phone: {
+    message: {
         type: String,
-        required: [true, 'Please add a phone number']
+        required: [true, 'Please add a message']
     },
     status: {
         type: String,
