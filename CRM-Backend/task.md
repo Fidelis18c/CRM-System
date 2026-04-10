@@ -1,0 +1,27 @@
+# Tasks - Mini CRM Backend
+
+- [x] Project Initialization
+    - [x] `npm init -y`
+    - [x] Install dependencies (express, mongoose, dotenv, cors, bcryptjs, jsonwebtoken, helmet, morgan)
+    - [x] Create folder structure
+- [x] Database & Config
+    - [x] Setup `.env` file
+    - [x] Create `db.js` connection logic
+- [x] Models
+    - [x] User Model
+    - [x] Lead Model
+    - [x] Note Model
+    - [x] ActivityLog Model
+- [x] Authentication (Admin)
+    - [x] Manual validation for login/register
+    - [x] JWT middleware
+    - [x] Auth controllers & routes
+- [x] Lead Management
+    - [x] Public lead capture (POST /leads/public)
+    - [x] List leads with search/filtering (GET /leads)
+    - [x] Update lead status (PATCH /leads/:id)
+    - [x] Add notes (POST /leads/:id/notes)
+- [x] Analytics & Polish
+    - [x] Dashboard analytics endpoints
+    - [x] Global error handling middleware
+    - [x] Final manual verification
