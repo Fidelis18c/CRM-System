@@ -35,3 +35,5 @@ app.listen(PORT, () => {
     console.log(`--- Server is starting... ---`);
     console.log(`Port: ${PORT}`);
 });
+
+module.exports = app;
