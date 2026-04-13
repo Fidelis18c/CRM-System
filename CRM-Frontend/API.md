@@ -3,7 +3,7 @@
 Welcome to the Mini CRM API documentation. This API provides endpoints for authentication and lead management.
 
 ## Base URL
-`http://localhost:5000/api/v1`
+`https://crm-system-bice.vercel.app/api/v1`
 
 ---
 
