@@ -16,11 +16,15 @@ app.use(helmet());
 
 // Allow requests from frontend (localhost or deployed)
 app.use(cors({
-    origin: process.env.FRONTEND_URL || [
+    origin: [
         'http://localhost:5173', 
-        'http://localhost:3000'
-    ]
+        'http://localhost:3000',
+        'https://crm-system-2nx4.vercel.app',
+        'https://crm-system-bice.vercel.app',
+        process.env.FRONTEND_URL
+    ].filter(Boolean)
 }));
+app.options(/.*/, cors());
 
 
 app.use(morgan('dev'));
