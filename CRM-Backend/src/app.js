@@ -13,9 +13,11 @@ const app = express();
 // Middleware
 app.use(helmet());
 
+
 app.use(morgan('dev'));
 app.use(express.json());
 app.use(cors({ origin: 'http://localhost:5173' }));
+
 
 // Routes
 app.use('/api/v1/auth', require('./routes/authRoutes'));
