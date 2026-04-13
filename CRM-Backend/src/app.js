@@ -17,6 +17,7 @@ app.use(helmet());
 app.use(morgan('dev'));
 app.use(express.json());
 app.use(cors({ origin: ['http://localhost:5173', 'https://crm-system-2nx4.vercel.app', 'https://crm-system-bice.vercel.app'] }));
+app.options('*', cors());
 
 
 // Routes
