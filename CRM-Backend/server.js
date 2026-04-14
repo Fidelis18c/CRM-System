@@ -41,9 +41,11 @@ app.get('/', (req, res) => {
 // Port configuration
 const PORT = process.env.PORT || 5000;
 
-app.listen(PORT, () => {
-    console.log(`--- Server is starting... ---`);
-    console.log(`Port: ${PORT}`);
-});
+if (!process.env.VERCEL) {
+    app.listen(PORT, () => {
+        console.log(`--- Server is starting... ---`);
+        console.log(`Port: ${PORT}`);
+    });
+}
 
 module.exports = app;
