@@ -8,6 +8,8 @@ const {
     getAnalytics,
     getLeadById,
     getLeadNotes,
+    updateLead,
+    deleteLead,
     getLeadActivities
 } = require('../controllers/leadController');
 
@@ -21,10 +23,18 @@ router.use(protect);
 
 router.get('/', getLeads);
 router.get('/analytics', getAnalytics);
-router.get('/:id', getLeadById);
-router.patch('/:id/status', updateLeadStatus);
-router.post('/:id/notes', addLeadNote);
+
+
 router.get('/:id/notes', getLeadNotes);
+router.post('/:id/notes', addLeadNote);
+
 router.get('/:id/activities', getLeadActivities);
+
+router.patch('/:id/status', updateLeadStatus);
+
+router.put('/:id', updateLead);
+router.delete('/:id', deleteLead);
+
+router.get('/:id', getLeadById);
 
 module.exports = router;

@@ -88,6 +88,29 @@ exports.getLeads = async (req, res, next) => {
     }
 };
 
+
+// @desc    Update a lead
+// @route   PUT /api/v1/leads/:id
+// @access  Private/Admin
+exports.updateLead = async (req, res) => {
+  try {
+    const updatedLead = await leadService.updateLead(req.params.id,req.body,req.user._id);
+
+    if (!updatedLead) {
+      return res.status(404).json({ success: false,message: 'Lead not found', });
+    }
+
+    res.status(200).json({success: true,data: updatedLead,});
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+
+
 // @desc    Update lead status
 // @route   PATCH /api/v1/leads/:id/status
 // @access  Private/Admin
@@ -171,4 +194,34 @@ exports.getLeadActivities = async (req, res, next) => {
     } catch (error) {
         res.status(500).json({ success: false, message: error.message });
     }
+};
+
+
+// @desc    Delete a lead
+// @route   DELETE /api/v1/leads/:id
+// @access  Private/Admin
+exports.deleteLead = async (req, res) => {
+  try {
+    const deleted = await leadService.deleteLead(
+      req.params.id,
+      req.user._id
+    );
+
+    if (!deleted) {
+      return res.status(404).json({
+        success: false,
+        message: 'Lead not found',
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: 'Lead deleted successfully',
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
 };

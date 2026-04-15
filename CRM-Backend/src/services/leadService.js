@@ -34,6 +34,38 @@ exports.updateLeadStatus = async (id, status, adminId) => {
     return lead;
 };
 
+
+
+exports.updateLead = async (leadId, updateData, adminId) => {
+  const lead = await Lead.findById(leadId);
+
+  if (!lead) return null;
+
+  const oldData = {
+    name: lead.name,
+    email: lead.email,
+    status: lead.status,
+  };
+
+  // Update fields
+  Object.assign(lead, updateData);
+
+  await lead.save();
+
+  await Activity.create({
+    leadId,
+    type: 'LEAD_UPDATED',
+    description: `Lead updated`,
+    metadata: {
+      before: oldData,
+      after: updateData,
+    },
+    createdBy: userId,
+  });
+
+  return lead;
+};
+
 exports.addNote = async (leadId, adminId, content) => {
     const note = await Note.create({ leadId, adminId, content });
     await ActivityLog.create({
@@ -90,4 +122,22 @@ exports.getLeadActivities = async (leadId) => {
     return await ActivityLog.find({ leadId })
         .populate('adminId', 'firstName lastName email')
         .sort('-timestamp');
+};
+
+
+exports.deleteLead = async (leadId, adminId) => {
+  const lead = await Lead.findById(leadId);
+
+  if (!lead) return null;
+
+  await lead.deleteOne();
+
+  await Activity.create({
+    leadId,
+    type: 'LEAD_DELETED',
+    description: `Lead deleted (${lead.name})`,
+    createdBy: userId,
+  });
+
+  return true;
 };
