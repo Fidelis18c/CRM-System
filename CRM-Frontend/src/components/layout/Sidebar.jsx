@@ -81,17 +81,9 @@ const Sidebar = ({ isOpen, onClose }) => {
             ))}
           </nav>
 
-          {/* Footer/Profile Mini */}
+          {/* Foo */}
           <div className="p-4 mt-auto space-y-2">
-            <div className="bg-[#f9fafb] rounded-xl p-4 flex items-center space-x-3 border border-[#e5e7eb]">
-              <div className="w-10 h-10 rounded-full bg-indigo-500 flex items-center justify-center text-white font-semibold">
-                FJ
-              </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-semibold text-[#111827] truncate">Fidelis Joseph</p>
-                <p className="text-xs text-[#6b7280] truncate">Senior Admin</p>
-              </div>
-            </div>
+            
             <button
               onClick={handleLogout}
               className="w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-red-600 hover:bg-red-50 font-medium transition-colors"

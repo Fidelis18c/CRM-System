@@ -98,7 +98,7 @@ export const StatusDistribution = ({ data = [] }) => {
             data={chartData}
             cx="50%"
             cy="50%"
-            innerRadius={30}
+            innerRadius={40}
             outerRadius={120}
             paddingAngle={8}
             dataKey="value"

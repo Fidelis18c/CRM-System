@@ -17,20 +17,10 @@ const Navbar = ({ onMenuClick }) => {
         </div>
 
         {/* Center: Search Bar */}
-        <div className="hidden md:flex flex-1 max-w-2xl relative group">
-          <HiOutlineSearch 
-            className="absolute left-4 top-1/2 -translate-y-1/2 text-[#9ca3af] group-focus-within:text-[#111827] transition-colors" 
-            size={20} 
-          />
-          <input
-            type="text"
-            placeholder="Search leads, activities, or logs..."
-            className="w-full bg-[#f9fafb] border border-[#e5e7eb] rounded-xl py-2.5 pl-12 pr-4 text-sm text-[#111827] focus:outline-none focus:border-[#111827]/30 focus:ring-4 focus:ring-black/5 transition-all placeholder:text-[#9ca3af]"
-          />
-        </div>
+       
 
-        {/* Right: Profile & Notifications */}
-        <div className="flex items-center space-x-4">
+        {/* Right: Profile  */}
+        <div className="absolute right-3 md:right-5  max-w-2xl flex items-center space-x-4">
   
           
           <div className="h-8 w-px bg-[#e5e7eb]" />
