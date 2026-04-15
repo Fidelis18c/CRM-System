@@ -112,7 +112,8 @@ Fetch lead list with pagination and filtering.
 - **Auth required:** Yes (Admin)
 - **Query Parameters:**
   - `search` (string): Search by name or email.
-  - `sort` (string): e.g., `name`, `-createdAt`.
+  - `sort` (string): Options include `newest` (default), `oldest`, `name`, `status`.
+  - `status` (string): Filter by status (e.g., `NEW`, or comma-separated `NEW,CONTACTED`).
   - `page` (number): Page number (default: 1).
   - `limit` (number): Number of items per page (default: 10).
 - **Success Response (200):**
@@ -203,5 +204,55 @@ Add a follow-up note to a lead.
     "content": "...",
     "_id": "note_id"
   }
+}
+```
+
+### Get Single Lead Details
+Fetch the full lead profile along with its notes and activity logs.
+
+- **URL:** `/leads/:id`
+- **Method:** `GET`
+- **Auth required:** Yes (Admin)
+- **Success Response (200):**
+```json
+{
+  "success": true,
+  "data": {
+    "lead": { ... },
+    "notes": [ ... ],
+    "activities": [ ... ]
+  }
+}
+```
+
+### Get Lead Notes
+Fetch only notes belonging to a specific lead.
+
+- **URL:** `/leads/:id/notes`
+- **Method:** `GET`
+- **Auth required:** Yes (Admin)
+- **Success Response (200):**
+```json
+{
+  "success": true,
+  "data": [
+    { "_id": "...", "content": "...", "adminId": { "name": "...", "email": "..." } }
+  ]
+}
+```
+
+### Get Lead Activities
+Fetch activity logs for a specific lead.
+
+- **URL:** `/leads/:id/activities`
+- **Method:** `GET`
+- **Auth required:** Yes (Admin)
+- **Success Response (200):**
+```json
+{
+  "success": true,
+  "data": [
+    { "_id": "...", "action": "STATUS_UPDATED", "details": "...", "timestamp": "..." }
+  ]
 }
 ```

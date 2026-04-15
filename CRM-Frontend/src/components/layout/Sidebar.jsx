@@ -1,6 +1,6 @@
 import React from 'react';
-import { NavLink, useNavigate } from 'react-router-dom';
-import { HiOutlineChartBar, HiOutlineUsers, HiOutlineClipboardList, HiOutlineX, HiOutlineLogout } from 'react-icons/hi';
+import { NavLink } from 'react-router-dom';
+import { HiOutlineChartBar, HiOutlineUsers, HiOutlineClipboardList, HiOutlineX } from 'react-icons/hi';
 import { clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
@@ -13,14 +13,6 @@ const navItems = [
 ];
 
 const Sidebar = ({ isOpen, onClose }) => {
-  const navigate = useNavigate();
-
-  const handleLogout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-    navigate('/login');
-    onClose();
-  };
 
   return (
     <>
@@ -81,17 +73,7 @@ const Sidebar = ({ isOpen, onClose }) => {
             ))}
           </nav>
 
-          {/* Foo */}
-          <div className="p-4 mt-auto space-y-2">
-            
-            <button
-              onClick={handleLogout}
-              className="w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-red-600 hover:bg-red-50 font-medium transition-colors"
-            >
-              <HiOutlineLogout size={22} />
-              <span>Logout</span>
-            </button>
-          </div>
+
         </div>
       </aside>
     </>

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { HiOutlineX, HiOutlineMail, HiOutlinePhone, HiOutlineCalendar } from 'react-icons/hi';
+import { HiOutlineX, HiOutlineMail, HiOutlineCalendar } from 'react-icons/hi';
 import { AiOutlineSend } from 'react-icons/ai';
 import api from '../../services/api';
 import Skeleton from '../ui/Skeleton';
@@ -9,29 +9,48 @@ const SideDrawer = ({ lead, isOpen, onClose, isLoading, onNoteAdded }) => {
   const [note, setNote] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  if (!lead && !isLoading) return null;
-
   const handleSaveNote = async () => {
-    if (!note.trim() || isSubmitting) return;
+  if (!note.trim()) return;
 
-    try {
-      setIsSubmitting(true);
-      await api.post(`/leads/${lead._id || lead.id}/notes`, { content: note });
-      setNote('');
-      if (onNoteAdded) onNoteAdded();
-    } catch (err) {
-      console.error('Failed to save note:', err);
-      alert('Failed to save note. Please try again.');
-    } finally {
-      setIsSubmitting(false);
+  const leadId = lead?._id || lead?.id;
+
+  if (!leadId) {
+    console.error('Lead ID is missing');
+    alert('Something went wrong. Please refresh.');
+    return;
+  }
+
+  try {
+    setIsSubmitting(true);
+
+    await api.post(`/leads/${leadId}/notes`, {
+      content: note.trim(),
+    });
+
+    setNote('');
+
+    // 🔥 Re-fetch updated lead (this is IMPORTANT)
+    if (onNoteAdded) {
+      await onNoteAdded();
     }
-  };
+
+  } catch (err) {
+    console.error('Failed to save note:', err);
+
+    const message =
+      err?.response?.data?.message || 'Failed to save note. Try again.';
+    alert(message);
+  } finally {
+    setIsSubmitting(false);
+  }
+};
 
   const handleStatusUpdate = async (newStatus) => {
+    const leadId = lead._id || lead.id;
     try {
       setIsSubmitting(true);
-      await api.patch(`/leads/${lead._id || lead.id}/status`, { status: newStatus });
-      if (onNoteAdded) onNoteAdded(); // Refresh lead details
+      await api.patch(`/leads/${leadId}/status`, { status: newStatus });
+      if (onNoteAdded) onNoteAdded();
     } catch (err) {
       console.error('Failed to update status:', err);
       alert('Failed to update status. Please try again.');
@@ -39,6 +58,8 @@ const SideDrawer = ({ lead, isOpen, onClose, isLoading, onNoteAdded }) => {
       setIsSubmitting(false);
     }
   };
+
+  const notes = lead?.notes || [];
 
   return (
     <AnimatePresence>
@@ -75,7 +96,7 @@ const SideDrawer = ({ lead, isOpen, onClose, isLoading, onNoteAdded }) => {
                     </div>
                   ) : (
                     <>
-                      <h2 className="text-xl font-bold text-[#111827] leading-tight text-black">{lead?.name}</h2>
+                      <h2 className="text-xl font-bold text-[#111827] leading-tight">{lead?.name}</h2>
                       <div className="flex items-center space-x-2">
                         <span className="w-2 h-2 rounded-full bg-green-500 shadow-[0_0_10px_rgba(34,197,94,0.3)]" />
                         <span className="text-xs text-[#6b7280] capitalize font-bold">{lead?.status}</span>
@@ -93,22 +114,27 @@ const SideDrawer = ({ lead, isOpen, onClose, isLoading, onNoteAdded }) => {
             </div>
 
             {/* Scrollable Content */}
-            <div className="flex-1 overflow-y-auto p-6 space-y-8 custom-scrollbar bg-white">
+            <div className="flex-1 overflow-y-auto p-6 space-y-6 bg-white">
+
               {/* Contact Info */}
-              <div className="space-y-4">
+              <div className="space-y-3">
                 <h3 className="text-xs font-bold text-[#6b7280] uppercase tracking-widest">Details</h3>
-                <div className="grid grid-cols-1 gap-4">
+                <div className="grid grid-cols-1 gap-3">
                   <div className="p-4 bg-[#f9fafb] rounded-xl border border-[#e5e7eb] group hover:border-[#111827]/20 transition-colors">
                     <div className="flex items-center space-x-3">
                       <HiOutlineMail className="text-[#9ca3af] group-hover:text-[#111827] transition-colors" size={20} />
-                      <span className="text-sm text-[#111827] font-medium">{isLoading ? <Skeleton className="h-4 w-40" /> : lead?.email}</span>
+                      <span className="text-sm text-[#111827] font-medium">
+                        {isLoading ? <Skeleton className="h-4 w-40" /> : lead?.email}
+                      </span>
                     </div>
                   </div>
                   <div className="p-4 bg-[#f9fafb] rounded-xl border border-[#e5e7eb] group hover:border-[#111827]/20 transition-colors">
                     <div className="flex items-center space-x-3">
                       <HiOutlineCalendar className="text-[#9ca3af] group-hover:text-[#111827] transition-colors" size={20} />
                       <span className="text-sm text-[#111827] font-medium">
-                        {isLoading ? <Skeleton className="h-4 w-32" /> : `Created on ${new Date(lead?.createdAt || lead?.date).toLocaleDateString()}`}
+                        {isLoading
+                          ? <Skeleton className="h-4 w-32" />
+                          : `Created on ${new Date(lead?.createdAt || lead?.date).toLocaleDateString()}`}
                       </span>
                     </div>
                   </div>
@@ -116,9 +142,9 @@ const SideDrawer = ({ lead, isOpen, onClose, isLoading, onNoteAdded }) => {
               </div>
 
               {/* Status Update */}
-              <div className="space-y-4">
+              <div className="space-y-3">
                 <h3 className="text-xs font-bold text-[#6b7280] uppercase tracking-widest">Update Status</h3>
-                <select 
+                <select
                   className="w-full bg-[#f9fafb] border border-[#e5e7eb] rounded-xl p-3 text-[#111827] focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-black transition-all font-bold"
                   value={lead?.status || 'NEW'}
                   disabled={isLoading || isSubmitting}
@@ -132,41 +158,55 @@ const SideDrawer = ({ lead, isOpen, onClose, isLoading, onNoteAdded }) => {
                 </select>
               </div>
 
-              {/* Timeline/Notes */}
+              {/* Notes Section */}
               <div className="space-y-4">
-                <h3 className="text-xs font-bold text-[#6b7280] uppercase tracking-widest">Activity History</h3>
+                <div className="flex items-center justify-between">
+                  <h3 className="text-xs font-bold text-[#6b7280] uppercase tracking-widest">Notes</h3>
+                  {notes.length > 0 && (
+                    <span className="text-[10px] font-bold bg-[#f3f4f6] text-[#6b7280] px-2 py-0.5 rounded-full">
+                      {notes.length}
+                    </span>
+                  )}
+                </div>
+
                 {isLoading ? (
                   <div className="space-y-4">
                     <Skeleton className="h-24 w-full rounded-xl" />
                     <Skeleton className="h-24 w-full rounded-xl" />
                   </div>
-                ) : (
-                  <div className="space-y-6 relative before:absolute before:left-[11px] before:top-2 before:bottom-2 before:w-[2px] before:bg-[#e5e7eb]">
-                    {lead?.notes?.length > 0 ? (
-                      lead.notes.map((note, i) => (
-                        <div key={note._id || i} className="relative pl-8">
-                          <div className="bg-[#f9fafb] p-4 rounded-xl border border-[#e5e7eb]">
-                            <div className="flex items-center justify-between mb-2">
-                              <span className="text-xs font-bold text-[#111827]">Admin</span>
-                              <span className="text-[10px] text-[#6b7280] italic">
-                                {new Date(note.createdAt).toLocaleString()}
-                              </span>
-                            </div>
-                            <p className="text-sm text-[#4b5563] leading-relaxed">
-                              {note.content}
-                            </p>
+                ) : notes.length > 0 ? (
+                  <div className="space-y-3 relative before:absolute before:left-[11px] before:top-2 before:bottom-2 before:w-[2px] before:bg-[#e5e7eb]">
+                    {notes.map((n, i) => (
+                      <div key={n._id || i} className="relative pl-8">
+                        <div className="bg-[#f9fafb] p-4 rounded-xl border border-[#e5e7eb] hover:border-[#111827]/20 transition-colors">
+                          <div className="flex items-center justify-between mb-2">
+                            <span className="text-xs font-bold text-[#111827]">
+                              {n.adminId
+                                ? `${n.adminId.firstName || ''} ${n.adminId.lastName || ''}`.trim() || n.adminId.email || 'Admin'
+                                : 'Admin'}
+                            </span>
+                            <span className="text-[10px] text-[#6b7280] italic">
+                              {new Date(n.createdAt).toLocaleString()}
+                            </span>
                           </div>
+                          <p className="text-sm text-[#4b5563] leading-relaxed">{n.content}</p>
                         </div>
-                      ))
-                    ) : (
-                      <p className="text-sm text-[#9ca3af] italic ml-8">No notes yet.</p>
-                    )}
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="flex flex-col items-center justify-center py-8 text-center">
+                    <div className="w-12 h-12 bg-[#f3f4f6] rounded-xl flex items-center justify-center mb-3">
+                      <span className="text-2xl">📝</span>
+                    </div>
+                    <p className="text-sm font-medium text-[#6b7280]">No notes yet</p>
+                    <p className="text-xs text-[#9ca3af] mt-1">Add your first note below</p>
                   </div>
                 )}
               </div>
             </div>
 
-            {/* Input Footer */}
+            {/* Note Input Footer */}
             <div className="p-6 bg-white border-t border-[#e5e7eb] sticky bottom-0">
               <div className="relative group">
                 <textarea
@@ -174,9 +214,12 @@ const SideDrawer = ({ lead, isOpen, onClose, isLoading, onNoteAdded }) => {
                   rows="3"
                   value={note}
                   onChange={(e) => setNote(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) handleSaveNote();
+                  }}
                   className="w-full bg-[#f9fafb] border border-[#e5e7eb] rounded-xl p-4 pr-12 text-sm text-[#111827] focus:outline-none focus:border-black/30 transition-all placeholder:text-[#9ca3af] resize-none hover:border-[#9ca3af]"
                 />
-                <button 
+                <button
                   onClick={handleSaveNote}
                   disabled={isSubmitting || !note.trim()}
                   className="absolute bottom-4 right-4 p-2.5 bg-[#000000] text-white rounded-lg shadow-lg shadow-black/10 hover:bg-[#222222] hover:-translate-y-0.5 transition-all disabled:opacity-50 disabled:translate-y-0"
@@ -188,6 +231,7 @@ const SideDrawer = ({ lead, isOpen, onClose, isLoading, onNoteAdded }) => {
                   )}
                 </button>
               </div>
+              <p className="text-[10px] text-[#9ca3af] mt-2 text-right">Ctrl+Enter to submit</p>
             </div>
           </motion.div>
         </>
