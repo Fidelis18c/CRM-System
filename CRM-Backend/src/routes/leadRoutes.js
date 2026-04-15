@@ -5,7 +5,10 @@ const {
     getLeads, 
     updateLeadStatus, 
     addLeadNote, 
-    getAnalytics 
+    getAnalytics,
+    getLeadById,
+    getLeadNotes,
+    getLeadActivities
 } = require('../controllers/leadController');
 
 const { protect } = require('../middleware/auth');
@@ -18,7 +21,10 @@ router.use(protect);
 
 router.get('/', getLeads);
 router.get('/analytics', getAnalytics);
+router.get('/:id', getLeadById);
 router.patch('/:id/status', updateLeadStatus);
 router.post('/:id/notes', addLeadNote);
+router.get('/:id/notes', getLeadNotes);
+router.get('/:id/activities', getLeadActivities);
 
 module.exports = router;

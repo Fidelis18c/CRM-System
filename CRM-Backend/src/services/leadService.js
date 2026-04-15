@@ -75,3 +75,19 @@ exports.getAnalytics = async () => {
         dailyLeads
     };
 };
+
+exports.getLeadById = async (id) => {
+    return await Lead.findById(id);
+};
+
+exports.getLeadNotes = async (leadId) => {
+    return await Note.find({ leadId })
+        .populate('adminId', 'firstName lastName email')
+        .sort('-createdAt');
+};
+
+exports.getLeadActivities = async (leadId) => {
+    return await ActivityLog.find({ leadId })
+        .populate('adminId', 'firstName lastName email')
+        .sort('-timestamp');
+};
